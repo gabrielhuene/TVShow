@@ -1,22 +1,33 @@
 const handleSearch = async (event) => {
   event.preventDefault();
 
-  // implemente a consulta a partir daqui
-
-  //// Exemplo de endpoint: https://api.tvmaze.com/search/shows?q=lost
-
-  //// Elementos de leiaute importantes:
-
-  //  #message: use para exibir mensagens aos usuário, por exemplo:
-
+  const texto = document.getElementById("query");
+  const shows = document.getElementById("shows");
   const message = document.querySelector('#message');
-  message.innerHTML = 'exercício ainda não resolvido.';
+  shows.innerHTML = '';
+  message.innerHTML = 'Procurando.';
 
-  //  #shows: conterá os shows, cada um em um <li>, por exemplo:
-  // <li>
-  //   <img class="poster" src="https://static.tvmaze.com/uploads/images/medium_portrait/0/1389.jpg" />
-  //   <span class="show-name">Lost</span>
-  // </li>
+  const endpoint = `https://api.tvmaze.com/search/shows?q=${texto.value}`
+  const resposta = await fetch (endpoint);
+  const show = await resposta.json();
+
+  if (show.length === 0) {
+
+    message.innerHTML = 'Não encontrado'
+    return;
+  }
+
+message.innerHTML = '';
+
+show.forEach((entry) => {
+
+  shows.insertAdjacentHTML(
+    'BEFOREEND',
+    `<li>
+        <img class="poster" src="${entry?.show?.image?.medium || ''}" />
+        <span class="show-name">${entry?.show?.name || ''}</span>
+        </li>`);
+});
 };
 
 document.addEventListener('DOMContentLoaded', () => {
